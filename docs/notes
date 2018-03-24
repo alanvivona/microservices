@@ -1,0 +1,15 @@
+Issue : How to use docker compose?
+  1.  Went trought the docker docs and installed Docker and Docker compose
+      For Docker : https://docs.docker.com/install/#server
+      https://docs.docker.com/install/linux/docker-ce/ubuntu/
+      Followed the steps in the documentation, was straightforward
+      For Docker componse : https://docs.docker.com/compose/install/#install-compose
+
+  2.  Went trought the docs to see how to setup the env for the challenge
+      https://docs.docker.com/compose/gettingstarted/#step-4-build-and-run-your-app-with-compose
+      - Error while trying to run docker compose:
+        https://stackoverflow.com/questions/44800484/docker-couldnt-connect-to-docker-daemon-at-httpdocker-localunixsocket-is-i#45528428
+        Tried building the image by hand with docker instead of docker-compose
+        "Got permission denied while trying to connect to the Docker daemon socket at"
+        There was a permission issue with the Docker daemon because my user was not automatically added to the docker group
+        Ran docker-compose up again and the build works this time
