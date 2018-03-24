@@ -33,12 +33,12 @@ func configDataBase() *sql.DB {
 	//db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", "user", "userpwd", "db", "db"))
 	if err != nil {
 		panic("Could not connect to the db")
-	} 
+	}
 
 	for {
 		err := db.Ping()
 		if err != nil {
-			time.Sleep(1*time.Second)
+			time.Sleep(1 * time.Second)
 			continue
 		}
 		// This is bad practice... You should create a schema.sql with all the definitions

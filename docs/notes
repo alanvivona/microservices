@@ -22,6 +22,35 @@ Good thing is I have used vagrant so, even tough I haven't used Docker I have an
         As I haven't used nginx in a while and I'm not 100% familiar with Docker config I used this medium post as a reference:
         https://medium.com/@francoisromain/setup-node-js-apache-nginx-reverse-proxy-with-docker-1f5a5cb3e71e
 
-        
+        For the API issue I read this docs:
+        https://docs.docker.com/network/bridge/
+        After a while of reading how the docker networks work and playing around with the docker cli
+        I list the docker containers using docker container ls and see that the API container is misconfigured (0.0.0.0:32770->8080/tcp):
 
+        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
+        958b209f4f26        challenge_app       "api"                    19 minutes ago      Up 9 minutes        0.0.0.0:32770->8080/tcp   api
+        04277dce40c3        challenge_nginx     "nginx -g 'daemon of…"   3 hours ago         Up 9 minutes        0.0.0.0:8080->80/tcp      server
+        e97a032d1385        mysql:5.7           "docker-entrypoint.s…"   16 hours ago        Up 9 minutes        3306/tcp                  db
+
+        Accessing http://localhost:32770/item/1 in my browser confirms the issue as I see error output from the API:
+        {
+            description: "sql: no rows in result set",
+            error: "find_error"
+        }
+        
+        I start using docker container inspect/port/logs/etc to troubleshoot the issue
+        Even tough I have an idea of what I need to do things are not working as expected.
+        I have setup, for now, all the container having a public port so I can acces the db and the app, work on them
+        and I'll come back to this issue latter
+
+        actual config (docker container ls output):
+        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
+        406c26876e0e        challenge_app       "api"                    5 seconds ago       Up 5 seconds        0.0.0.0:32774->8080/tcp   api
+        e1f9d7186764        mysql:5.7           "docker-entrypoint.s…"   5 seconds ago       Up 5 seconds        0.0.0.0:32773->3306/tcp   db
+        95dac5642446        challenge_nginx     "nginx -g 'daemon of…"   35 minutes ago      Up 4 seconds        0.0.0.0:8080->80/tcp      proxy
+
+    4.  I haven't used golang before so I need to install it and learn a some syntax to complete the challenge
+        Installed go following the docs on their page : https://golang.org/doc/install?download=go1.10.linux-amd64.tar.gz
+        Installed support for go on my vscode
+        
 
