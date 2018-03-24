@@ -2,11 +2,13 @@ version: '3'
 services:
   nginx:
     build: nginx
+    container_name: server
     ports:
-      - "8080"
+      - "8080:80"
 
   app:
     build: app
+    container_name: api
     expose:
       - "8080"
 

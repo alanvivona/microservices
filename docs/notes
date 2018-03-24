@@ -14,3 +14,14 @@ Good thing is I have used vagrant so, even tough I haven't used Docker I have an
         "Got permission denied while trying to connect to the Docker daemon socket at"
         There was a permission issue with the Docker daemon because my user was not automatically added to the docker group
         Ran docker-compose up again and the build works this time
+
+    3.  How to fix the network issues?
+        I need to understand docker config first : https://docs.docker.com/compose/networking/
+        
+        I need to set the nginx to be exposed on localhost:8080 and forward the requests to the API
+        As I haven't used nginx in a while and I'm not 100% familiar with Docker config I used this medium post as a reference:
+        https://medium.com/@francoisromain/setup-node-js-apache-nginx-reverse-proxy-with-docker-1f5a5cb3e71e
+
+        
+
+
