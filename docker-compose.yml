@@ -2,21 +2,20 @@ version: '3'
 services:
   nginx:
     build: nginx
-    container_name: proxy
+    container_name: nginx
     ports:
       - "8080:80"
+    restart: always
 
   app:
     build: app
-    container_name: api
-    ports:
+    container_name: app
+    expose:
       - "8080"
 
   db:
     image: "mysql:5.7"
     container_name: db
-    ports:
-      - "3306"
     environment:
       - MYSQL_ROOT_PASSWORD=rootpwd
       - MYSQL_DATABASE=db
