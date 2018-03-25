@@ -1,6 +1,7 @@
 package gdrive
 
 import (
+	"api/app/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -15,6 +16,22 @@ import (
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 )
+
+// Service ...
+type Service struct {
+	// TODO : add token config here?
+}
+
+// CreateFile ...
+func (s *GdService) CreateFile(i *models.Item) (Item, error) {
+	// Access items properties
+	// &i.ID, &i.Name, &i.Description
+	// create new file on gdrive
+	// confirm new file has been created
+	return &i, nil
+}
+
+////////////////////// QUICK GUIDE EXAMPLE CODE ///////////////////////////
 
 // getClient uses a Context and Config to retrieve a Token
 // then generate a Client. It returns the generated Client.

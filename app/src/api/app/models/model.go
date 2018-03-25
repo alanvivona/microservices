@@ -14,3 +14,10 @@ type ItemServiceInterface interface {
 	CreateItem(i *Item) error
 	DeleteItem(id string) error
 }
+
+// GdriveServiceInterface ...
+type GdriveServiceInterface interface {
+	SearchInDoc(id string, word string) error
+	SearchDoc(id string) error
+	CreateFile(i *Item) error
+}
