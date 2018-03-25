@@ -1,6 +1,6 @@
-Issue : How to use docker compose?
-Good thing is I have used vagrant so, even tough I haven't used Docker I have an idea of how it works
-    1.  Went trought the docker docs and installed Docker and Docker compose
+    1.  Issue : How to use docker compose?
+        Good thing is I have used vagrant so, even tough I haven't used Docker I have an idea of how it works
+        Went trought the docker docs and installed Docker and Docker compose
         For Docker : https://docs.docker.com/install/#server
         https://docs.docker.com/install/linux/docker-ce/ubuntu/
         Followed the steps in the documentation, was straightforward
@@ -53,4 +53,6 @@ Good thing is I have used vagrant so, even tough I haven't used Docker I have an
         Installed go following the docs on their page : https://golang.org/doc/install?download=go1.10.linux-amd64.tar.gz
         Installed support for go on my vscode
         
-
+    5.  Google drive API integration
+        Used the quickstart guide : https://developers.google.com/drive/v3/web/quickstart/go
+        
