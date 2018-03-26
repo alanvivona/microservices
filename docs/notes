@@ -49,6 +49,9 @@
         e1f9d7186764        mysql:5.7           "docker-entrypoint.s…"   5 seconds ago       Up 5 seconds        0.0.0.0:32773->3306/tcp   db
         95dac5642446        challenge_nginx     "nginx -g 'daemon of…"   35 minutes ago      Up 4 seconds        0.0.0.0:8080->80/tcp      proxy
 
+        After several hours of not having a clue about what was wrong with my network config I discovered that there was nothing wrong with my config
+        It was the way I was building the docker images what was wrong (such a nice waste of time! hahaha)
+
     4.  I haven't used golang before so I need to install it and learn a some syntax to complete the challenge
         Installed go following the docs on their page : https://golang.org/doc/install?download=go1.10.linux-amd64.tar.gz
         Installed support for go on my vscode
