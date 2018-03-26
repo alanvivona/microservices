@@ -1,17 +1,22 @@
 version: '3'
+
 services:
+
   nginx:
     build: nginx
-    container_name: nginx
+    container_name: proxy
     ports:
       - "8080:80"
-    restart: always
+    networks: 
+      - challenge
 
   app:
     build: app
     container_name: app
     expose:
       - "8080"
+    networks: 
+      - challenge
 
   db:
     image: "mysql:5.7"
@@ -21,3 +26,11 @@ services:
       - MYSQL_DATABASE=db
       - MYSQL_USER=user
       - MYSQL_PASSWORD=userpwd
+    networks: 
+      - challenge
+
+networks:
+  challenge:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"

@@ -28,5 +28,7 @@ func configDataBase() *sql.DB {
 	db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", "user", "userpwd", "db", "db"))
 	if err != nil {
 		panic("Could not connect to the db")
+	} else {
+		return db
 	}
 }
