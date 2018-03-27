@@ -26,6 +26,8 @@ services:
       - MYSQL_DATABASE=db
       - MYSQL_USER=user
       - MYSQL_PASSWORD=userpwd
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
     networks: 
       - challenge
 

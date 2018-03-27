@@ -60,3 +60,18 @@
     5.  Google drive API integration
         Used the quickstart guide : https://developers.google.com/drive/v3/web/quickstart/go
 
+    6.  Configuring the database to load scripts on init
+        Read the dockerfile for the image version https://github.com/docker-library/mysql/blob/ad625c64a06e16683e997e5a0147508d115f4989/5.7/Dockerfile
+
+    7.  Connect app to db
+        The connection string is not working so I start reading the doc for the mysql driver on github and implement a ping on the dbconnection fucntion to
+        see if the db name resolution is being done correctly from the docker instance
+
+        out, _ := exec.Command("ping", "db", "-c 5", "-i 3", "-w 10").Output()
+        if strings.Contains(string(out), "Destination Host Unreachable") {
+            fmt.Println("TANGO DOWN")
+        } else {
+            fmt.Println("IT'S ALIVEEE")
+        }
+
+        
