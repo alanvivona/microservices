@@ -2,17 +2,17 @@ package models
 
 // Item ...
 type Item struct {
-	ID          string `json:"id"`
+	ID          int    `json:"id"`
 	Name        string `json:"name"`
 	Description string `json:"description"`
 }
 
 // ItemServiceInterface ...
 type ItemServiceInterface interface {
-	Item(id string) (*Item, error)
+	Item(id int) (*Item, error)
 	Items() ([]*Item, error)
 	CreateItem(i *Item) error
-	DeleteItem(id string) error
+	DeleteItem(id int) error
 }
 
 // GdriveServiceInterface ...
