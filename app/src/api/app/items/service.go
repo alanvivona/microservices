@@ -34,7 +34,7 @@ func (s *ItemService) Items() ([]*models.Item, error) {
 		if err != nil {
 			return nil, err
 		}
-		items = append(items, item)
+		items = append(items, &item)
 	}
 	err = rows.Err()
 	if err != nil {
