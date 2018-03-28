@@ -77,3 +77,6 @@
     8.  Testing the app
         For testing/debugging I'm using ZAP so I can mess with the requests and also use the automated scanners/fuzzers to find and, potencially, patch vulnerabilities
 
+    9.  Securing nginx
+        I used this as a reference: https://gist.github.com/plentz/6737338
+        
