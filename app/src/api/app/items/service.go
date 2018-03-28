@@ -22,7 +22,6 @@ func (s *ItemService) Item(id int) (*models.Item, error) {
 
 // Items ...
 func (s *ItemService) Items() ([]*models.Item, error) {
-	var item models.Item
 	var items []*models.Item
 	rows, err := s.DB.Query(`SELECT id, name, description FROM items`)
 	if err != nil {
@@ -30,6 +29,7 @@ func (s *ItemService) Items() ([]*models.Item, error) {
 	}
 	defer rows.Close()
 	for rows.Next() {
+		var item models.Item
 		err := rows.Scan(&item.ID, &item.Name, &item.Description)
 		if err != nil {
 			return nil, err
