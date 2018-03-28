@@ -22,13 +22,15 @@ services:
     image: "mysql:5.7"
     container_name: db
     environment:
+      # - MYSQL_RANDOM_ROOT_PASSWORD=yes
       - MYSQL_ROOT_PASSWORD=rootpwd
       - MYSQL_DATABASE=db
       - MYSQL_USER=user
       - MYSQL_PASSWORD=userpwd
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
-    networks: 
+      ## DONT FORGET TO UPDATE THE SCRIPT VERSION!!! ##
+      - ./db/current/v20180328.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
       - challenge
 
 networks:
@@ -36,3 +38,6 @@ networks:
     driver: bridge
     driver_opts:
       com.docker.network.enable_ipv6: "false"
+    ipam:
+      config:
+      - subnet: 1.0.0.0/24
