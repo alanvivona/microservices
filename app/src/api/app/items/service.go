@@ -3,6 +3,7 @@ package items
 import (
 	"api/app/models"
 	"database/sql"
+	"html"
 )
 
 // ItemService ...
@@ -51,7 +52,7 @@ func (s *ItemService) CreateItem(i *models.Item) error {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(i.Name, i.Description)
+	res, err := stmt.Exec(html.EscapeString(i.Name), html.EscapeString(i.Description))
 	if err != nil {
 		return err
 	}

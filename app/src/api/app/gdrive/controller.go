@@ -1,39 +1,43 @@
 package gdrive
 
 import (
-	"api/app/models"
 	"net/http"
-	"strings"
+
+	"github.com/gin-gonic/gin"
 )
+
+// Auth ...
+func Auth(c *gin.Context) {
+
+	// Verify if is a redirect from Gdrive with the authorized token
+	stateToken := c.Query("state")
+	if stateToken != "" {
+		// Getting new token from Gdrive
+		tokenCode := c.Query("code")
+		if stateToken != "state-token" || tokenCode == "" {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "Invalid token"})
+		} else {
+			// TODO SAVE TOKEN TO SERVICE
+			c.JSON(http.StatusOK, gin.H{"success": "auth_success", "description": "Authentication success"})
+		}
+	} else {
+		// First time auth. Provide auth URL to the user
+		err := Gds.CreateClient()
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "Auth process error"})
+		}
+		c.JSON(http.StatusOK, gin.H{"auth": "OK", "go to the following URL to authorize the ML Challenge API": "http://LALALALALALALALLA"})
+	}
+}
 
 // SearchInDoc ...
 func SearchInDoc(c *gin.Context) {
-	itemID := strings.TrimSpace(c.Param("id"))
-	if itemID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
-		return
-	}
-
-	item, err := Is.Item(itemID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "find_error", "description": err.Error()})
-		return
-	}
-	c.JSON(200, item)
-	return
+	// TODO
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "not implemented yet"})
 }
 
-// PostItem ...
-func PostItem(c *gin.Context) {
-	i := &models.Item{}
-	if err := c.BindJSON(i); c.Request.ContentLength == 0 || err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": err.Error()})
-		return
-	}
-	err := Is.CreateItem(i)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "save_error", "description": err.Error()})
-		return
-	}
-	c.JSON(201, i)
+// CreateFile ...
+func CreateFile(c *gin.Context) {
+	// TODO
+	c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "not implemented yet"})
 }

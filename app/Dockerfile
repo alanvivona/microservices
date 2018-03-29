@@ -7,5 +7,5 @@ RUN go get golang.org/x/oauth2/...
 RUN go get github.com/go-sql-driver/mysql
 
 ADD ./src/api /go/src/api 
-RUN go install api 
+RUN go install api
 CMD ["api"]

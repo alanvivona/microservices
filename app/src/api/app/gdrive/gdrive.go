@@ -8,13 +8,16 @@ import (
 
 //GdS google drive service
 var (
-	GdService models.GdriveServiceInterface
+	Gds models.GdriveServiceInterface
 )
 
 // Configure for google drive
 func Configure(r *gin.Engine) {
 	Gds = &GdriveService{}
-
-	r.GET("/search-in-doc/:id", SearchInDoc)
-	r.POST("/file", CreateFile)
+	group := r.Group("/gdrive")
+	{
+		group.GET("/auth", Auth)
+		group.GET("/search-in-doc/:id", SearchInDoc)
+		group.POST("/file", CreateFile)
+	}
 }

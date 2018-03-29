@@ -1,12 +1,10 @@
 package gdrive
 
 import (
-	"api/app/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net/http"
 	"net/url"
 	"os"
 	"os/user"
@@ -15,41 +13,98 @@ import (
 	"golang.org/x/net/context"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
+	drive "google.golang.org/api/drive/v2"
 )
 
-// Service ...
-type Service struct {
-	// TODO : add token config here?
+const (
+	clientSecretFilePath string = "/go/src/api/app/gdrive/client_secret.json"
+)
+
+// GdriveService ...
+type GdriveService struct {
+	CLIENT *drive.Service
+}
+
+// SearchInDoc ...
+func (s *GdriveService) SearchInDoc(id string, word string) error {
+	return nil
 }
 
 // CreateFile ...
-func (s *GdService) CreateFile(i *models.Item) (Item, error) {
-	// Access items properties
-	// &i.ID, &i.Name, &i.Description
-	// create new file on gdrive
-	// confirm new file has been created
-	return &i, nil
+func (s *GdriveService) CreateFile(id string) error {
+	return nil
 }
 
-////////////////////// QUICK GUIDE EXAMPLE CODE ///////////////////////////
+// CreateClient ...
+func (s *GdriveService) CreateClient() error {
 
-// getClient uses a Context and Config to retrieve a Token
-// then generate a Client. It returns the generated Client.
-func getClient(ctx context.Context, config *oauth2.Config) *http.Client {
+	ctx := context.Background()
+
+	b, err := ioutil.ReadFile(clientSecretFilePath)
+	if err != nil {
+		log.Fatalf("Unable to initialize auth. Error code: 002", err)
+		return err
+	}
+
+	config, err := google.ConfigFromJSON(b, drive.DriveMetadataReadonlyScope)
+	if err != nil {
+		log.Fatalf("Unable to initialize auth. Error code: 003", err)
+		return err
+	}
+
 	cacheFile, err := tokenCacheFile()
 	if err != nil {
 		log.Fatalf("Unable to get path to cached credential file. %v", err)
+		return err
 	}
 	tok, err := tokenFromFile(cacheFile)
 	if err != nil {
 		tok = getTokenFromWeb(config)
 		saveToken(cacheFile, tok)
 	}
-	return config.Client(ctx, tok)
+
+	client := config.Client(ctx, tok)
+	srv, err := drive.New(client)
+	if err != nil {
+		log.Fatalf("Unable to initialize client. Error code: 005", err)
+		return err
+	}
+	s.CLIENT = srv
+	return nil
 }
 
-// getTokenFromWeb uses Config to request a Token.
-// It returns the retrieved Token.
+func tokenCacheFile() (string, error) {
+	usr, err := user.Current()
+	if err != nil {
+		return "", err
+	}
+	tokenCacheDir := filepath.Join(usr.HomeDir, ".credentials")
+	os.MkdirAll(tokenCacheDir, 0700)
+	return filepath.Join(tokenCacheDir,
+		url.QueryEscape("drive-go-quickstart.json")), err
+}
+
+func tokenFromFile(file string) (*oauth2.Token, error) {
+	f, err := os.Open(file)
+	if err != nil {
+		return nil, err
+	}
+	t := &oauth2.Token{}
+	err = json.NewDecoder(f).Decode(t)
+	defer f.Close()
+	return t, err
+}
+
+func saveToken(file string, token *oauth2.Token) {
+	fmt.Printf("Saving credential file to: %s\n", file)
+	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
+	if err != nil {
+		log.Fatalf("Unable to cache oauth token: %v", err)
+	}
+	defer f.Close()
+	json.NewEncoder(f).Encode(token)
+}
+
 func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	fmt.Printf("Go to the following link in your browser then type the "+
@@ -65,80 +120,4 @@ func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
 		log.Fatalf("Unable to retrieve token from web %v", err)
 	}
 	return tok
-}
-
-// tokenCacheFile generates credential file path/filename.
-// It returns the generated credential path/filename.
-func tokenCacheFile() (string, error) {
-	usr, err := user.Current()
-	if err != nil {
-		return "", err
-	}
-	tokenCacheDir := filepath.Join(usr.HomeDir, ".credentials")
-	os.MkdirAll(tokenCacheDir, 0700)
-	return filepath.Join(tokenCacheDir,
-		url.QueryEscape("drive-go-quickstart.json")), err
-}
-
-// tokenFromFile retrieves a Token from a given file path.
-// It returns the retrieved Token and any read error encountered.
-func tokenFromFile(file string) (*oauth2.Token, error) {
-	f, err := os.Open(file)
-	if err != nil {
-		return nil, err
-	}
-	t := &oauth2.Token{}
-	err = json.NewDecoder(f).Decode(t)
-	defer f.Close()
-	return t, err
-}
-
-// saveToken uses a file path to create a file and store the
-// token in it.
-func saveToken(file string, token *oauth2.Token) {
-	fmt.Printf("Saving credential file to: %s\n", file)
-	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
-	if err != nil {
-		log.Fatalf("Unable to cache oauth token: %v", err)
-	}
-	defer f.Close()
-	json.NewEncoder(f).Encode(token)
-}
-
-func main() {
-	ctx := context.Background()
-
-	b, err := ioutil.ReadFile("client_secret.json")
-	if err != nil {
-		log.Fatalf("Unable to read client secret file: %v", err)
-	}
-
-	// If modifying these scopes, delete your previously saved credentials
-	// at ~/.credentials/drive-go-quickstart.json
-	config, err := google.ConfigFromJSON(b, drive.DriveMetadataReadonlyScope)
-	if err != nil {
-		log.Fatalf("Unable to parse client secret file to config: %v", err)
-	}
-	client := getClient(ctx, config)
-
-	srv, err := drive.New(client)
-	if err != nil {
-		log.Fatalf("Unable to retrieve drive Client %v", err)
-	}
-
-	r, err := srv.Files.List().PageSize(10).
-		Fields("nextPageToken, files(id, name)").Do()
-	if err != nil {
-		log.Fatalf("Unable to retrieve files: %v", err)
-	}
-
-	fmt.Println("Files:")
-	if len(r.Files) > 0 {
-		for _, i := range r.Files {
-			fmt.Printf("%s (%s)\n", i.Name, i.Id)
-		}
-	} else {
-		fmt.Println("No files found.")
-	}
-
 }

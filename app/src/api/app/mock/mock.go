@@ -13,7 +13,7 @@ type ItemService struct {
 	CreateItemFn      func(i *models.Item) error
 	CreateItemInvoked bool
 
-	DeleteItemFn      func(id string) error
+	DeleteItemFn      func(id int) error
 	DeleteItemInvoked bool
 }
 

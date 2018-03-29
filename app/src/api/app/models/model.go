@@ -17,7 +17,7 @@ type ItemServiceInterface interface {
 
 // GdriveServiceInterface ...
 type GdriveServiceInterface interface {
+	CreateClient() error
 	SearchInDoc(id string, word string) error
-	SearchDoc(id string) error
-	CreateFile(i *Item) error
+	CreateFile(id string) error
 }

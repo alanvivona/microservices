@@ -15,9 +15,11 @@ var (
 // Configure for items
 func Configure(r *gin.Engine, db *sql.DB) {
 	Is = &ItemService{DB: db}
-
-	r.GET("/item", GetItems)
-	r.GET("/item/:id", GetItem)
-	r.POST("/item", PostItem)
-	r.DELETE("/item/:id", DeleteItem)
+	group := r.Group("/item")
+	{
+		group.GET("/", GetItems)
+		group.GET("/:id", GetItem)
+		group.POST("/", PostItem)
+		group.DELETE("/:id", DeleteItem)
+	}
 }
