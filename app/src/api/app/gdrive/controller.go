@@ -8,7 +8,6 @@ import (
 
 // Auth ...
 func Auth(c *gin.Context) {
-
 	// Verify if is a redirect from Gdrive with the authorized token
 	stateToken := c.Query("state")
 	if stateToken != "" {
@@ -22,11 +21,11 @@ func Auth(c *gin.Context) {
 		}
 	} else {
 		// First time auth. Provide auth URL to the user
-		err := Gds.CreateClient()
+		authURL, err := Gds.GetAuthURL()
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "Auth process error"})
 		}
-		c.JSON(http.StatusOK, gin.H{"auth": "OK", "go to the following URL to authorize the ML Challenge API": "http://LALALALALALALALLA"})
+		c.Redirect(http.StatusSeeOther, authURL)
 	}
 }
 

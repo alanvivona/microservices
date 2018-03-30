@@ -81,7 +81,7 @@ func tokenCacheFile() (string, error) {
 	tokenCacheDir := filepath.Join(usr.HomeDir, ".credentials")
 	os.MkdirAll(tokenCacheDir, 0700)
 	return filepath.Join(tokenCacheDir,
-		url.QueryEscape("drive-go-quickstart.json")), err
+		url.QueryEscape("drive-go.json")), err
 }
 
 func tokenFromFile(file string) (*oauth2.Token, error) {
@@ -103,6 +103,23 @@ func saveToken(file string, token *oauth2.Token) {
 	}
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
+}
+
+// GetAuthURL ...
+func (s *GdriveService) GetAuthURL() (string, error) {
+	b, err := ioutil.ReadFile(clientSecretFilePath)
+	if err != nil {
+		log.Fatalf("Unable to initialize auth. Error code: 002", err)
+		return "", err
+	}
+
+	config, err := google.ConfigFromJSON(b, drive.DriveMetadataReadonlyScope)
+	if err != nil {
+		log.Fatalf("Unable to initialize auth. Error code: 003", err)
+		return "", err
+	}
+	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
+	return authURL, nil
 }
 
 func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
