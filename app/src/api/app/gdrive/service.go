@@ -1,6 +1,7 @@
 package gdrive
 
 import (
+	"api/app/models"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -10,7 +11,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	"golang.org/x/net/context"
+	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
 	drive "google.golang.org/api/drive/v2"
@@ -18,6 +19,7 @@ import (
 
 const (
 	clientSecretFilePath string = "/go/src/api/app/gdrive/client_secret.json"
+	gdriveAPIbaseURL     string = "https://www.googleapis.com"
 )
 
 // GdriveService ...
@@ -25,20 +27,38 @@ type GdriveService struct {
 	CLIENT *drive.Service
 }
 
+// HasClient ...
+func (s *GdriveService) HasClient() bool {
+	return s.CLIENT != nil
+}
+
 // SearchInDoc ...
 func (s *GdriveService) SearchInDoc(id string, word string) error {
+	r, err := s.CLIENT.Files.List().Do()
+	if err != nil {
+		log.Fatalf("Unable to retrieve files: %v", err)
+	}
+	fmt.Println("Files:")
+	if len(r.Items) == 0 {
+		fmt.Println("No files found.")
+	} else {
+		for _, i := range r.Items {
+			fmt.Printf("%s (%s)\n", i.Title, i.Id)
+		}
+	}
 	return nil
 }
 
 // CreateFile ...
-func (s *GdriveService) CreateFile(id string) error {
-	return nil
+func (s *GdriveService) CreateFile(file *models.File) (*drive.File, error) {
+	driveFile, err := s.CLIENT.Files.Insert(&drive.File{Title: file.Name}).Do()
+	return driveFile, err
 }
 
 // CreateClient ...
-func (s *GdriveService) CreateClient() error {
+func (s *GdriveService) CreateClient(c *gin.Context, tokenCode string) error {
 
-	ctx := context.Background()
+	s.CLIENT = nil
 
 	b, err := ioutil.ReadFile(clientSecretFilePath)
 	if err != nil {
@@ -59,11 +79,14 @@ func (s *GdriveService) CreateClient() error {
 	}
 	tok, err := tokenFromFile(cacheFile)
 	if err != nil {
-		tok = getTokenFromWeb(config)
+		tok, err := config.Exchange(c, tokenCode)
+		if err != nil {
+			log.Fatalf("Unable to retrieve token from web %v", err)
+		}
 		saveToken(cacheFile, tok)
 	}
 
-	client := config.Client(ctx, tok)
+	client := config.Client(c, tok)
 	srv, err := drive.New(client)
 	if err != nil {
 		log.Fatalf("Unable to initialize client. Error code: 005", err)
@@ -120,21 +143,4 @@ func (s *GdriveService) GetAuthURL() (string, error) {
 	}
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
 	return authURL, nil
-}
-
-func getTokenFromWeb(config *oauth2.Config) *oauth2.Token {
-	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
-	fmt.Printf("Go to the following link in your browser then type the "+
-		"authorization code: \n%v\n", authURL)
-
-	var code string
-	if _, err := fmt.Scan(&code); err != nil {
-		log.Fatalf("Unable to read authorization code %v", err)
-	}
-
-	tok, err := config.Exchange(oauth2.NoContext, code)
-	if err != nil {
-		log.Fatalf("Unable to retrieve token from web %v", err)
-	}
-	return tok
 }
