@@ -2,7 +2,7 @@ package models
 
 import (
 	"github.com/gin-gonic/gin"
-	drive "google.golang.org/api/drive/v2"
+	drive "google.golang.org/api/drive/v3"
 )
 
 // Item ...
@@ -32,6 +32,6 @@ type GdriveServiceInterface interface {
 	HasClient() bool
 	GetAuthURL() (string, error)
 	CreateClient(*gin.Context, string) error
-	SearchInDoc(id string, word string) error
+	SearchInDoc(id string, word string) (bool, error)
 	CreateFile(f *File) (*drive.File, error)
 }

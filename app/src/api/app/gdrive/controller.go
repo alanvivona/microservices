@@ -2,6 +2,7 @@ package gdrive
 
 import (
 	"api/app/models"
+	"fmt"
 	"net/http"
 	"strings"
 
@@ -22,16 +23,16 @@ func Auth(c *gin.Context) {
 		Gds.CreateClient(c, tokenCode)
 		c.JSON(http.StatusOK, gin.H{"success": "auth_success", "description": "Authentication success"})
 		return
-	} else {
-		// First time auth. Provide auth URL to the user
-		authURL, err := Gds.GetAuthURL()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "Auth process error"})
-			return
-		}
-		c.Redirect(http.StatusSeeOther, authURL)
+	}
+
+	// First time auth. Provide auth URL to the user
+	authURL, err := Gds.GetAuthURL()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "Auth process error"})
 		return
 	}
+	c.Redirect(http.StatusSeeOther, authURL)
+	return
 }
 
 // SearchInDoc ...
@@ -50,10 +51,19 @@ func SearchInDoc(c *gin.Context) {
 			return
 		}
 
-		Gds.SearchInDoc(fileID, word)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "auth_error", "description": "not implemented yet"})
-		return
+		found, err := Gds.SearchInDoc(fileID, word)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "search_error", "description": "error ocurred while performing the search"})
+			return
+		}
 
+		if found == false {
+			c.JSON(http.StatusNotFound, gin.H{"result": "word not found"})
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{"result": "word found"})
+		return
 	}
 
 	Auth(c)
@@ -70,10 +80,12 @@ func CreateFile(c *gin.Context) {
 		}
 		driveFile, err := Gds.CreateFile(file)
 		if err != nil {
+			fmt.Println("\n\n HERE BAD REQUEST \n\n")
 			c.JSON(http.StatusBadRequest, gin.H{"error": "save_error", "description": err.Error(), "drivefile": driveFile})
 			return
 		}
-		c.JSON(201, driveFile)
+		fmt.Println("\n\n HERE GOOD REQUEST \n\n")
+		c.JSON(http.StatusOK, driveFile)
 		return
 	}
 

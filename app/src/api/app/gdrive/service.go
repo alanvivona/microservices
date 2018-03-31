@@ -10,11 +10,12 @@ import (
 	"os"
 	"os/user"
 	"path/filepath"
+	"regexp"
 
 	"github.com/gin-gonic/gin"
 	"golang.org/x/oauth2"
 	"golang.org/x/oauth2/google"
-	drive "google.golang.org/api/drive/v2"
+	drive "google.golang.org/api/drive/v3"
 )
 
 const (
@@ -33,25 +34,18 @@ func (s *GdriveService) HasClient() bool {
 }
 
 // SearchInDoc ...
-func (s *GdriveService) SearchInDoc(id string, word string) error {
-	r, err := s.CLIENT.Files.List().Do()
+func (s *GdriveService) SearchInDoc(id string, word string) (bool, error) {
+	file, err := s.CLIENT.Files.Get(id).Do()
 	if err != nil {
 		log.Fatalf("Unable to retrieve files: %v", err)
 	}
-	fmt.Println("Files:")
-	if len(r.Items) == 0 {
-		fmt.Println("No files found.")
-	} else {
-		for _, i := range r.Items {
-			fmt.Printf("%s (%s)\n", i.Title, i.Id)
-		}
-	}
-	return nil
+	regex := regexp.MustCompile(word)
+	return regex.FindString(file.Description) == "", err
 }
 
 // CreateFile ...
 func (s *GdriveService) CreateFile(file *models.File) (*drive.File, error) {
-	driveFile, err := s.CLIENT.Files.Insert(&drive.File{Title: file.Name}).Do()
+	driveFile, err := s.CLIENT.Files.Create(&drive.File{Name: file.Name, Description: file.Description}).Do()
 	return driveFile, err
 }
 
@@ -66,7 +60,7 @@ func (s *GdriveService) CreateClient(c *gin.Context, tokenCode string) error {
 		return err
 	}
 
-	config, err := google.ConfigFromJSON(b, drive.DriveMetadataReadonlyScope)
+	config, err := google.ConfigFromJSON(b, drive.DriveFileScope)
 	if err != nil {
 		log.Fatalf("Unable to initialize auth. Error code: 003", err)
 		return err
@@ -136,7 +130,7 @@ func (s *GdriveService) GetAuthURL() (string, error) {
 		return "", err
 	}
 
-	config, err := google.ConfigFromJSON(b, drive.DriveMetadataReadonlyScope)
+	config, err := google.ConfigFromJSON(b, drive.DriveFileScope)
 	if err != nil {
 		log.Fatalf("Unable to initialize auth. Error code: 003", err)
 		return "", err
