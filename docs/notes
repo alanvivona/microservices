@@ -79,3 +79,7 @@
 
     9.  Securing nginx
         I used this as a reference: https://gist.github.com/plentz/6737338
+
+    10. Unit tests
+        https://blog.alexellis.io/golang-writing-unit-tests/
+        

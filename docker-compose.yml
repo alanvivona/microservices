@@ -5,6 +5,8 @@ services:
   nginx:
     build: nginx
     container_name: proxy
+    depends_on:
+      - db
     ports:
       - "8080:80"
     networks: 
