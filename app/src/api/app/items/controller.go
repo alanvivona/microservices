@@ -20,7 +20,7 @@ func GetItem(c *gin.Context) {
 	}
 
 	itemIDNumber, err := strconv.Atoi(itemID)
-	if err != nil {
+	if err != nil || itemIDNumber <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
 		return
 	}

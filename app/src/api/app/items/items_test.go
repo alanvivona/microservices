@@ -11,7 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func ConfigureRouter() *Engine {
+func ConfigureRouter() *gin.Engine {
 	router := gin.Default()
 	Configure(router, nil)
 	return router
@@ -93,9 +93,9 @@ func TestPostItem(t *testing.T) {
 	var is mock.ItemService
 	Is = &is
 
-	is.CreateItemFn = func() ([]*models.Item, error) {
+	is.CreateItemFn = func(*models.Item) error {
 		// TODO: return item data
-		return nil, nil
+		return nil
 	}
 
 	testCases := []struct {
@@ -117,7 +117,8 @@ func TestPostItem(t *testing.T) {
 		is.CreateItemInvoked = false
 		// Invoke the handler.
 		w := httptest.NewRecorder()
-		r, _ := http.NewRequest(testCase.method, testCase.url, testCase.body)
+		w.WriteString(testCase.body)
+		r, _ := http.NewRequest(testCase.method, testCase.url, nil)
 		router.ServeHTTP(w, r)
 		if is.CreateItemInvoked != testCase.shouldServiceBeCalled {
 			t.Fatal("expected PostItem() to be invoked")
@@ -132,9 +133,9 @@ func TestDeleteItem(t *testing.T) {
 	var is mock.ItemService
 	Is = &is
 
-	is.DeleteItemFn = func() ([]*models.Item, error) {
+	is.DeleteItemFn = func(int) error {
 		// TODO: return item data
-		return nil, nil
+		return nil
 	}
 
 	testCases := []struct {
