@@ -21,7 +21,6 @@ func ConfigureRouter() *gin.Engine {
 func TestGetItem(t *testing.T) {
 	router := ConfigureRouter()
 
-	// Inject our mock into our handler.
 	var is mock.ItemService
 	Is = &is
 
@@ -44,12 +43,11 @@ func TestGetItem(t *testing.T) {
 
 	for _, testCase := range testCases {
 		is.ItemInvoked = false
-		// Invoke the handler.
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest(testCase.method, testCase.url, nil)
 		router.ServeHTTP(w, r)
 		if is.ItemInvoked != testCase.shouldServiceBeCalled {
-			t.Fatal("expected GetItem() to be invoked")
+			t.Fatal("FAILED - Item Controller :: TestGetItem", testCase.method, testCase.url)
 		}
 	}
 }
@@ -57,12 +55,10 @@ func TestGetItem(t *testing.T) {
 func TestGetItems(t *testing.T) {
 	router := ConfigureRouter()
 
-	// Inject our mock into our handler.
 	var is mock.ItemService
 	Is = &is
 
 	is.ItemsFn = func() ([]*models.Item, error) {
-		// TODO: return list of items
 		return nil, nil
 	}
 
@@ -71,18 +67,17 @@ func TestGetItems(t *testing.T) {
 		url                   string
 		shouldServiceBeCalled bool
 	}{
-		{"GET", "/item/", true},
+		{"GET", "/item", true},
 		{"GET", "/item/0", false},
 	}
 
 	for _, testCase := range testCases {
 		is.ItemsInvoked = false
-		// Invoke the handler.
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest(testCase.method, testCase.url, nil)
 		router.ServeHTTP(w, r)
 		if is.ItemsInvoked != testCase.shouldServiceBeCalled {
-			t.Fatal("expected GetItems() to be invoked")
+			t.Fatal("FAILED - Item Controller :: TestGetItems", testCase.method, testCase.url)
 		}
 	}
 }
@@ -90,12 +85,10 @@ func TestGetItems(t *testing.T) {
 func TestPostItem(t *testing.T) {
 	router := ConfigureRouter()
 
-	// Inject our mock into our handler.
 	var is mock.ItemService
 	Is = &is
 
 	is.CreateItemFn = func(*models.Item) error {
-		// TODO: return item data
 		return nil
 	}
 
@@ -116,12 +109,11 @@ func TestPostItem(t *testing.T) {
 
 	for _, testCase := range testCases {
 		is.CreateItemInvoked = false
-		// Invoke the handler.
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest(testCase.method, testCase.url, strings.NewReader(testCase.body))
 		router.ServeHTTP(w, r)
 		if is.CreateItemInvoked != testCase.shouldServiceBeCalled {
-			t.Fatal("expected PostItem() to be invoked", testCase.method, testCase.url, testCase.body)
+			t.Fatal("FAILED - Item Controller :: TestPostItem", testCase.method, testCase.url, testCase.body)
 		}
 	}
 }
@@ -129,12 +121,10 @@ func TestPostItem(t *testing.T) {
 func TestDeleteItem(t *testing.T) {
 	router := ConfigureRouter()
 
-	// Inject our mock into our handler.
 	var is mock.ItemService
 	Is = &is
 
 	is.DeleteItemFn = func(int) error {
-		// TODO: return item data
 		return nil
 	}
 
@@ -154,12 +144,11 @@ func TestDeleteItem(t *testing.T) {
 
 	for _, testCase := range testCases {
 		is.DeleteItemInvoked = false
-		// Invoke the handler.
 		w := httptest.NewRecorder()
 		r, _ := http.NewRequest(testCase.method, testCase.url, nil)
 		router.ServeHTTP(w, r)
 		if is.DeleteItemInvoked != testCase.shouldServiceBeCalled {
-			t.Fatal("expected DeleteItem() to be invoked")
+			t.Fatal("FAILED - Item Controller :: TestDeleteItem", testCase.method, testCase.url)
 		}
 	}
 }

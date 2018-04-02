@@ -15,22 +15,22 @@ func GetItem(c *gin.Context) {
 	itemID := strings.TrimSpace(c.Param("id"))
 
 	if itemID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "id_error"})
 		return
 	}
 
 	itemIDNumber, err := strconv.Atoi(itemID)
 	if err != nil || itemIDNumber <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "id_error"})
 		return
 	}
 
 	item, err := Is.Item(itemIDNumber)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "find_error", "description": err.Error()})
+		c.SecureJSON(http.StatusInternalServerError, gin.H{"error": "find_error", "description": err.Error()})
 		return
 	}
-	c.JSON(200, item)
+	c.SecureJSON(http.StatusOK, item)
 	return
 }
 
@@ -38,10 +38,10 @@ func GetItem(c *gin.Context) {
 func GetItems(c *gin.Context) {
 	items, err := Is.Items()
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "find_multiple_error", "description": err.Error()})
+		c.SecureJSON(http.StatusInternalServerError, gin.H{"error": "find_multiple_error", "description": err.Error()})
 		return
 	}
-	c.JSON(200, items)
+	c.SecureJSON(http.StatusOK, items)
 	return
 }
 
@@ -49,44 +49,44 @@ func GetItems(c *gin.Context) {
 func PostItem(c *gin.Context) {
 	i := &models.Item{}
 	if err := c.BindJSON(i); c.Request.ContentLength == 0 || err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": err.Error()})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": err.Error()})
 		return
 	}
 	if i.Description == "" || i.Name == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": "Missing property"})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": "Missing property"})
 		return
 	}
 	if len(i.Description) >= 44 || len(i.Name) >= 44 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "length_error", "description": "Content Lenght exceeds the limit"})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "length_error", "description": "Content Lenght exceeds the limit"})
 		return
 	}
 	err := Is.CreateItem(i)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "save_error", "description": err.Error()})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "save_error", "description": err.Error()})
 		return
 	}
-	c.JSON(201, i)
+	c.SecureJSON(http.StatusCreated, i)
 }
 
 // DeleteItem ...
 func DeleteItem(c *gin.Context) {
 	itemID := strings.TrimSpace(c.Param("id"))
 	if itemID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "id_error"})
 		return
 	}
 
 	itemIDNumber, err := strconv.Atoi(itemID)
 	if err != nil || itemIDNumber <= 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
+		c.SecureJSON(http.StatusBadRequest, gin.H{"error": "id_error"})
 		return
 	}
 
 	err = Is.DeleteItem(itemIDNumber)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "delete_error", "description": err.Error()})
+		c.SecureJSON(http.StatusInternalServerError, gin.H{"error": "delete_error", "description": err.Error()})
 		return
 	}
-	c.JSON(200, itemIDNumber)
+	c.SecureJSON(http.StatusOK, itemIDNumber)
 	return
 }

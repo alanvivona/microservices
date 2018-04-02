@@ -1,4 +1,4 @@
-package items
+package tests
 
 import (
 	"net/http"
@@ -17,13 +17,16 @@ func Test(t *testing.T) {
 		expectedCode int
 		expectedBody string
 	}{
-		{"GET", "/item/1", 200, "{id:1}"},
+		{"GET", "/item/1", http.StatusOK, "{id:1}"},
 	}
 
 	router := gin.Default()
 	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+	router.Any("/", func(c *gin.Context) {
+		c.JSON(200, gin.H{"message": "pong"})
+	})
 	router.Run("80")
-	router.Any("/", ProcessResponse)
 
 	for _, testCase := range testCases {
 		w := httptest.NewRecorder()

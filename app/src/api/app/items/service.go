@@ -74,11 +74,10 @@ func (s *ItemService) DeleteItem(id int) error {
 	}
 	defer stmt.Close()
 
-	res, err := stmt.Exec(id)
+	_, err = stmt.Exec(id)
 	if err != nil {
 		return err
 	}
 
-	print("RES OF DELETE", res)
 	return nil
 }

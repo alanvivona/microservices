@@ -32,18 +32,17 @@ services:
       - MYSQL_USER=user
       - MYSQL_PASSWORD=userpwd
     volumes:
-      ## DONT FORGET TO UPDATE THE SCRIPT VERSION!!! ##
       - ./db/current/v20180328.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - challenge
 
-  tests:
-    build: integration-tests
-    container_name: tests
-    expose:
-      - "8080"
-    networks: 
-      - challenge
+  #tests:
+  #  build: integration-tests
+  #  container_name: tests
+  #  expose:
+  #    - "8080"
+  #  networks: 
+  #    - challenge
 
 networks:
   challenge:

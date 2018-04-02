@@ -24,6 +24,7 @@ const (
 func StartApp() {
 	r = gin.Default()
 	r.Use(gin.Logger())
+	r.Use(gin.Recovery())
 	db := configDataBase()
 	items.Configure(r, db)
 	gdrive.Configure(r)
