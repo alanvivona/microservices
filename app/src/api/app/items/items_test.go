@@ -107,11 +107,11 @@ func TestPostItem(t *testing.T) {
 	}{
 		{"POST", "/item/", "{", false},
 		{"POST", "/item/", "{\"fakeproperty\":\"value\"}", false},
-		//{"POST", "/item/", "{\"name\":\"test name\"}", false},
-		//{"POST", "/item/", "{\"name\":\"test name\", \"fakeproperty\": \"value\"}", false},
-		//{"POST", "/item/", "{\"name\":\"test name\", \"description\": \"test desc\"}", true},
-		//{"POST", "/item/", "{\"name\":\"test name ---- really long name that does not meet the criteria\", \"description\": \"test desc\"}", false},
-		//{"POST", "/item/", "{\"name\":\"test name\", \"description\": \"test desc ---- really long desc that does not meet the criteria\"}", false},
+		{"POST", "/item/", "{\"name\":\"test name\"}", false},
+		{"POST", "/item/", "{\"name\":\"test name\", \"fakeproperty\": \"value\"}", false},
+		{"POST", "/item/", "{\"name\":\"test name\", \"description\": \"test desc\"}", true},
+		{"POST", "/item/", "{\"name\":\"test name ---- really long name that does not meet the criteria\", \"description\": \"test desc\"}", false},
+		{"POST", "/item/", "{\"name\":\"test name\", \"description\": \"test desc ---- really long desc that does not meet the criteria\"}", false},
 	}
 
 	for _, testCase := range testCases {
@@ -146,7 +146,7 @@ func TestDeleteItem(t *testing.T) {
 		{"DELETE", "/item/1", true},
 		{"DELETE", "/item/-1", false},
 		{"DELETE", "/item/0", false},
-		{"DELETE", "/item/999999999999999", false},
+		{"DELETE", "/item/99999999999999999999", false},
 		{"DELETE", "/item/001", true},
 		{"DELETE", "/item/a", false},
 		{"DELETE", "/item/", false},

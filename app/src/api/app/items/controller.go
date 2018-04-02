@@ -52,6 +52,14 @@ func PostItem(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": err.Error()})
 		return
 	}
+	if i.Description == "" || i.Name == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "bind_error", "description": "Missing property"})
+		return
+	}
+	if len(i.Description) >= 44 || len(i.Name) >= 44 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "length_error", "description": "Content Lenght exceeds the limit"})
+		return
+	}
 	err := Is.CreateItem(i)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "save_error", "description": err.Error()})
@@ -69,7 +77,7 @@ func DeleteItem(c *gin.Context) {
 	}
 
 	itemIDNumber, err := strconv.Atoi(itemID)
-	if err != nil {
+	if err != nil || itemIDNumber <= 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "id_error"})
 		return
 	}
