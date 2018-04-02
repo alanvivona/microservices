@@ -36,14 +36,6 @@ services:
     networks:
       - challenge
 
-  #tests:
-  #  build: integration-tests
-  #  container_name: tests
-  #  expose:
-  #    - "8080"
-  #  networks: 
-  #    - challenge
-
 networks:
   challenge:
     driver: bridge

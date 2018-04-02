@@ -29,5 +29,9 @@ This will build and configure 3 docker containers within the same network:
   Delete item:  
   > curl 'http://localhost:8080/item/1' -X DELETE
 
-## Tests
-Tests for the items API are present on app/src/api/app/items/items_test.go
+## Unit Tests
+There are some unit tests for the items API on app/src/api/app/items/items_test.go
+
+## Integration Tests
+I've wrote some integration tests for the app.
+You can find then on integration-tests/integration_test.go
