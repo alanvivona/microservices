@@ -11,7 +11,7 @@ This will build and configure 3 docker containers within the same network:
   - POST    /item  
   - DELETE  /item/{id}  
   - GET     /gdrive/auth  
-  -	GET     /gdrive/search-in-doc/{id}  
+  -	GET     /gdrive/search-in-doc/{id}?word={word}
   - POST    /gdrive/file  
 - A MySql container <b>populated with data from a dump on /db/current</b>
 
@@ -28,6 +28,15 @@ This will build and configure 3 docker containers within the same network:
 
   Delete item:  
   > curl 'http://localhost:8080/item/1' -X DELETE
+
+  Auth with google (the other two gdrive APIs will redirect here if not authorized yet)
+  > curl 'http://localhost:8080/gdrive/auth' -X GET
+
+  Search in doc
+  > curl 'http://localhost:8080/gdrive/search-in-doc/1?word=dev' -X GET
+
+  Create a gdrive file
+  > curl 'http://localhost:8080/gdrive/file' -X POST -d '{"name": "test gdrive file name", "description": "test gdrive file description"}'
 
 ## Unit Tests
 There are some unit tests for the items API on app/src/api/app/items/items_test.go

@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"log"
 	"net/url"
 	"os"
 	"os/user"
@@ -37,7 +36,8 @@ func (s *GdriveService) HasClient() bool {
 func (s *GdriveService) SearchInDoc(id string, word string) (bool, error) {
 	file, err := s.CLIENT.Files.Get(id).Do()
 	if err != nil {
-		log.Fatalf("Unable to retrieve files: %v", err)
+		os.Stdout.WriteString("!! Error on google drive file search:" + "\n" + err.Error() + "\n")
+		return false, err
 	}
 	regex := regexp.MustCompile(word)
 	return regex.FindString(file.Description) == "", err
@@ -56,26 +56,26 @@ func (s *GdriveService) CreateClient(c *gin.Context, tokenCode string) error {
 
 	b, err := ioutil.ReadFile(clientSecretFilePath)
 	if err != nil {
-		log.Fatalf("Unable to initialize auth. Error code: 002", err)
+		os.Stdout.WriteString("Unable to initialize auth. Error code: 002" + "\n" + err.Error() + "\n")
 		return err
 	}
 
 	config, err := google.ConfigFromJSON(b, drive.DriveFileScope)
 	if err != nil {
-		log.Fatalf("Unable to initialize auth. Error code: 003", err)
+		os.Stdout.WriteString("Unable to initialize auth. Error code: 003" + "\n" + err.Error() + "\n")
 		return err
 	}
 
 	cacheFile, err := tokenCacheFile()
 	if err != nil {
-		log.Fatalf("Unable to get path to cached credential file. %v", err)
+		os.Stdout.WriteString("Unable to get path to cached credential file. %v" + "\n" + err.Error() + "\n")
 		return err
 	}
 	tok, err := tokenFromFile(cacheFile)
 	if err != nil {
 		tok, err := config.Exchange(c, tokenCode)
 		if err != nil {
-			log.Fatalf("Unable to retrieve token from web %v", err)
+			os.Stdout.WriteString("Unable to retrieve token from web %v" + "\n" + err.Error() + "\n")
 		}
 		saveToken(cacheFile, tok)
 	}
@@ -83,7 +83,7 @@ func (s *GdriveService) CreateClient(c *gin.Context, tokenCode string) error {
 	client := config.Client(c, tok)
 	srv, err := drive.New(client)
 	if err != nil {
-		log.Fatalf("Unable to initialize client. Error code: 005", err)
+		os.Stdout.WriteString("Unable to initialize client. Error code: 005" + "\n" + err.Error() + "\n")
 		return err
 	}
 	s.CLIENT = srv
@@ -116,7 +116,7 @@ func saveToken(file string, token *oauth2.Token) {
 	fmt.Printf("Saving credential file to: %s\n", file)
 	f, err := os.OpenFile(file, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0600)
 	if err != nil {
-		log.Fatalf("Unable to cache oauth token: %v", err)
+		os.Stdout.WriteString("Unable to cache oauth token: %v" + "\n" + err.Error() + "\n")
 	}
 	defer f.Close()
 	json.NewEncoder(f).Encode(token)
@@ -126,13 +126,13 @@ func saveToken(file string, token *oauth2.Token) {
 func (s *GdriveService) GetAuthURL() (string, error) {
 	b, err := ioutil.ReadFile(clientSecretFilePath)
 	if err != nil {
-		log.Fatalf("Unable to initialize auth. Error code: 002", err)
+		os.Stdout.WriteString("Unable to initialize auth. Error code: 002" + "\n" + err.Error() + "\n")
 		return "", err
 	}
 
 	config, err := google.ConfigFromJSON(b, drive.DriveFileScope)
 	if err != nil {
-		log.Fatalf("Unable to initialize auth. Error code: 003", err)
+		os.Stdout.WriteString("Unable to initialize auth. Error code: 003" + "\n" + err.Error() + "\n")
 		return "", err
 	}
 	authURL := config.AuthCodeURL("state-token", oauth2.AccessTypeOffline)
