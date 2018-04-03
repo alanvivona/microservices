@@ -6,81 +6,34 @@
         Followed the steps in the documentation, was straightforward
         For Docker componse : https://docs.docker.com/compose/install/#install-compose
 
-    2.  Went trought the docs to see how to setup the env for the challenge
-        https://docs.docker.com/compose/gettingstarted/#step-4-build-and-run-your-app-with-compose
-        Error while trying to run docker compose:
-        https://stackoverflow.com/questions/44800484/docker-couldnt-connect-to-docker-daemon-at-httpdocker-localunixsocket-is-i#45528428
-        Tried building the image by hand with docker instead of docker-compose
-        "Got permission denied while trying to connect to the Docker daemon socket at"
-        There was a permission issue with the Docker daemon because my user was not automatically added to the docker group
-        Ran docker-compose up again and the build works this time
-
-    3.  How to fix the network issues?
-        I need to understand docker config first : https://docs.docker.com/compose/networking/
+    2.  Issue: How to fix/setup the network
+        Read a bunch of doc from docker compose until I got an idea of how to configure the networks as I was asked
+        https://docs.docker.com/compose/networking/
         
-        I need to set the nginx to be exposed on localhost:8080 and forward the requests to the API
-        As I haven't used nginx in a while and I'm not 100% familiar with Docker config I used this medium post as a reference:
-        https://medium.com/@francoisromain/setup-node-js-apache-nginx-reverse-proxy-with-docker-1f5a5cb3e71e
-
-        For the API issue I read this docs:
-        https://docs.docker.com/network/bridge/
-        After a while of reading how the docker networks work and playing around with the docker cli
-        I list the docker containers using docker container ls and see that the API container is misconfigured (0.0.0.0:32770->8080/tcp):
-
-        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
-        958b209f4f26        challenge_app       "api"                    19 minutes ago      Up 9 minutes        0.0.0.0:32770->8080/tcp   api
-        04277dce40c3        challenge_nginx     "nginx -g 'daemon of…"   3 hours ago         Up 9 minutes        0.0.0.0:8080->80/tcp      server
-        e97a032d1385        mysql:5.7           "docker-entrypoint.s…"   16 hours ago        Up 9 minutes        3306/tcp                  db
-
-        Accessing http://localhost:32770/item/1 in my browser confirms the issue as I see error output from the API:
-        {
-            description: "sql: no rows in result set",
-            error: "find_error"
-        }
+    3.  Issue: Facing Go for the first time
+        I haven't used golang before so I needed to install it and learn some syntax in order to complete the challenge
+        Fisrt I installed go following the docs on their page : https://golang.org/doc/install?download=go1.10.linux-amd64.tar.gz
+        Also installed the golang extention on my vscode
+        Go turned out to be pretty awesome and fun to work with
+        Some things like the multiple returns, the variable declarations inside if conditions come really handy
+        I actually been wanted to learn go for a while and this came as a great excuse to finally do it and I think it turned out great
         
-        I start using docker container inspect/port/logs/etc to troubleshoot the issue
-        Even tough I have an idea of what I need to do things are not working as expected.
-        I have setup, for now, all the container having a public port so I can acces the db and the app, work on them
-        and I'll come back to this issue latter
+    4.  Issue: Google drive API integration
+        Used the quickstart guide to setup a simple test: https://developers.google.com/drive/v3/web/quickstart/go
 
-        actual config (docker container ls output):
-        CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                     NAMES
-        406c26876e0e        challenge_app       "api"                    5 seconds ago       Up 5 seconds        0.0.0.0:32774->8080/tcp   api
-        e1f9d7186764        mysql:5.7           "docker-entrypoint.s…"   5 seconds ago       Up 5 seconds        0.0.0.0:32773->3306/tcp   db
-        95dac5642446        challenge_nginx     "nginx -g 'daemon of…"   35 minutes ago      Up 4 seconds        0.0.0.0:8080->80/tcp      proxy
-
-        After several hours of not having a clue about what was wrong with my network config I discovered that there was nothing wrong with my config
-        It was the way I was building the docker images what was wrong (such a nice waste of time! hahaha)
-
-    4.  I haven't used golang before so I need to install it and learn a some syntax to complete the challenge
-        Installed go following the docs on their page : https://golang.org/doc/install?download=go1.10.linux-amd64.tar.gz
-        Installed support for go on my vscode
-        Also tried the goland IDE
-        
-    5.  Google drive API integration
-        Used the quickstart guide : https://developers.google.com/drive/v3/web/quickstart/go
-
-    6.  Configuring the database to load scripts on init
+    5.  Issue: Configure the database to load scripts on build
         Read the dockerfile for the image version https://github.com/docker-library/mysql/blob/ad625c64a06e16683e997e5a0147508d115f4989/5.7/Dockerfile
 
-    7.  Connect app to db
-        The connection string is not working so I start reading the doc for the mysql driver on github and implement a ping on the dbconnection fucntion to
-        see if the db name resolution is being done correctly from the docker instance
+    6.  Testing the app
+        For testing/debugging I used zaproxy so I can mess with the requests as I please
 
-        out, _ := exec.Command("ping", "db", "-c 5", "-i 3", "-w 10").Output()
-        if strings.Contains(string(out), "Destination Host Unreachable") {
-            fmt.Println("TANGO DOWN")
-        } else {
-            fmt.Println("IT'S ALIVEEE")
-        }
+    7.  Securing nginx
+        I used this as a reference to add a couple of security-related headers. Nathing too fancy
+        https://gist.github.com/plentz/6737338
 
-    8.  Testing the app
-        For testing/debugging I'm using ZAP so I can mess with the requests and also use the automated scanners/fuzzers to find and, potencially, patch vulnerabilities
-
-    9.  Securing nginx
-        I used this as a reference: https://gist.github.com/plentz/6737338
-
-    10. Unit tests
-        https://blog.alexellis.io/golang-writing-unit-tests/
-        
-    11. Gin gonic is really fucking fast!
+    8. Unit tests
+        Started reading this guide: https://blog.alexellis.io/golang-writing-unit-tests/
+        And also using some of the template code that was present in the challenge as a reference
+    
+    9. Integration tests
+        I simple used the unit tests I had written as a reference to write some very simple integration tests
