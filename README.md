@@ -38,9 +38,12 @@ This will build and configure 3 docker containers within the same network:
   Create a gdrive file
   > curl 'http://localhost:8080/gdrive/file' -X POST -d '{"name": "test gdrive file name", "description": "test gdrive file description"}'
 
-## Unit Tests
+## Unit Tests  
 There are some unit tests for the items API on app/src/api/app/items/items_test.go
 
-## Integration Tests
-I've wrote some integration tests for the app.
-You can find then on integration-tests/integration_test.go
+## Integration Tests  
+Integration tests for the app can be found on integration-tests/integration_test.go
+
+## Notes
+Some notes I took while working on this can be found on  
+docs/notes
