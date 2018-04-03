@@ -25,8 +25,6 @@ func TestIntegration(t *testing.T) {
 		{"GET", "http://localhost:8080/gdrive", "", http.StatusNotFound, ""},
 		{"GET", "http://localhost:8080/gdrive/auth", "", http.StatusOK, ""},
 		{"GET", "http://localhost:8080/gdrive/search-in-doc", "", http.StatusNotFound, ""},
-		{"GET", "http://localhost:8080/gdrive/search-in-doc/7", "", http.StatusBadRequest, ""},
-		{"GET", "http://localhost:8080/gdrive/search-in-doc/7?word=test", "", http.StatusInternalServerError, ""},
 
 		// Testing Item URLs functionality
 		{"GET", "http://localhost:8080/item/1", "", http.StatusOK, "{\"id\":1,\"name\":\"new item name\",\"description\":\"new item description\"}"},
