@@ -45,5 +45,4 @@ There are some unit tests for the items API on app/src/api/app/items/items_test.
 Integration tests for the app can be found on integration-tests/integration_test.go
 
 ## Notes
-Some notes I took while working on this can be found on  
-docs/notes
+Some notes I took while working on this can be found on docs/notes
