@@ -1,7 +1,6 @@
 # Challenge
 
-![Alt text](./docs/diagram.svg)
-<img src="./docs/diagram.svg">
+![Arch diagram](https://raw.githubusercontent.com/alanvivona/microservices-arch/master/docs/microservices-arch.svg?sanitize=true)
 
 ## Build :  
   - docker-compose up
