@@ -1,4 +1,4 @@
-# Challenge
+# Microservices arch example
 
 ![Arch diagram](https://raw.githubusercontent.com/alanvivona/microservices-arch/master/docs/microservices-arch.svg?sanitize=true)
 
