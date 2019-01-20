@@ -1,5 +1,8 @@
 # Challenge
 
+![Alt text](./docs/diagram.svg)
+<img src="./docs/diagram.svg">
+
 ## Build :  
   - docker-compose up
 
@@ -43,6 +46,3 @@ There are some unit tests for the items API on app/src/api/app/items/items_test.
 
 ## Integration Tests  
 Integration tests for the app can be found on integration-tests/integration_test.go
-
-## Notes
-Some notes I took while working on this can be found on docs/notes
